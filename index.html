@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://static.wecity.qq.com/lego_next_static/lib/vue-2.6.11/dist/vue.min.js
+  "></script>
+  <title>～</title><style>
+    *{
+        user-select:none;
+    }
+    html,body{
+        margin:0;
+        padding:0;
+        position:relative;
+        background-color:#000;
+        height:100%;
+        width:100%;
+    }
+    #app{
+        padding:0;
+        margin:0;
+        position:relative;
+        height:100%;
+        width:100%;
+        background-color:#000;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+    }
+    .title{
+        color:white;
+        text-align:center;
+        font-size:4vw;
+        margin-bottom:1em;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    .time{
+        position:relative;
+        z-index:10;
+        color:white;
+        font-family: Technology;
+        text-align:center;
+        font-size:12vw;
+        text-shadow: 0 0 14px rgba(255,255,255,0.4);
+    }
+    @font-face{
+        font-family: Technology;
+        src: url(https://static.wecity.qq.com/Digital-7Mono-9970a7c5a8076174bff0532c8013a547.TTF);
+    }
+</style>
+</head>
+<body>
+  <div id="app" @dblclick="toggleFullScreen">
+    <div class="title">距离{{title}}还有</div>
+    <div class="time">
+        {{timeText}}
+    </div>
+</div>
+<script>
+
+
+new Vue({
+  data() {
+    return {
+      title: '元旦',
+      timeText: "00:00:00",
+      to: new Date("2023/01/01 00:00:00")
+    }
+  },
+  mounted() {
+    const params = new URL(location.href).searchParams
+    const title = params.get("title");
+    const to = params.get("to")
+    if (to && title) { 
+      this.title = title;
+      this.to = new Date(to); 
+    }
+
+    this.resetTimeText();
+    setInterval(() => {
+      this.resetTimeText();
+    }, 500);
+  },
+  methods: {
+    toggleFullScreen() { 
+      const isFullScreen = document.fullscreenElement && document.fullscreenElement !== null
+      if (!isFullScreen) { 
+        document.body.requestFullscreen()
+      } else {
+        document.exitFullscreen()
+
+      }
+    },
+    resetTimeText() { 
+      const cur = Date.now();
+      if (cur > this.to.valueOf()) { 
+        this.timeText = "00:00:00";
+        return; // 已经超出
+      }
+      const target = this.to.valueOf();
+      // console.log(cur, target);
+      // 下面计算相对时间
+
+      // 首先计算秒数
+      const p = v => `${v}`.padStart(2, "0");
+      const offset = parseInt(target - cur) / 1000;
+      const second = parseInt(offset % 60);
+      const min = parseInt(offset / 60) % 60;
+      const hour = parseInt((offset / 60) / 60);
+      this.timeText = `${p(hour)}:${p(min)}:${p(second)}`;
+      document.title = this.timeText;
+
+    }
+  },
+  el: '#app'
+})
+</script>
+</body>
+</html>

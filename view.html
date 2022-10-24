@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片预览</title>
+  <style>
+    html,body{
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      padding:0;
+      margin:0;
+      width:100%;
+      height:100%;
+      background-color:#000;
+      overflow:hidden;
+    }
+    img{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      display:flex;
+      flex:auto;
+      overflow:hidden;
+      object-fit: contain;
+    }
+    img.thumbnail{
+      z-index:0;
+    }
+    img.origin{
+      z-index:100;
+    }
+  </style>
+</head>
+<body>
+  
+  <script>
+    function createImg(src, className = ""){
+      const imgEle = document.createElement("img");
+      imgEle.src = src;
+      imgEle.className = className;
+      document.body.append(imgEle);
+    }
+
+    const url = new URL(location.href);
+    let pic = decodeURIComponent(url.searchParams.get("src"));
+    let picUrl = new URL(pic);
+
+    if(picUrl.hostname.endsWith("mscststs.com")){
+      createImg(pic + "?thumbnails&location", "thumbnail");
+      createImg(pic, "origin");
+      document.title = decodeURI(pic.split("/").pop());
+    }
+  </script>
+</body>
+</html>
