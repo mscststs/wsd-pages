@@ -44,6 +44,7 @@
       imgEle.src = src;
       imgEle.className = className;
       document.body.append(imgEle);
+      return imgEle;
     }
 
     const url = new URL(location.href);
@@ -52,7 +53,10 @@
 
     if(picUrl.hostname.endsWith("mscststs.com")){
       createImg(pic + "?thumbnails&location", "thumbnail");
-      createImg(pic, "origin");
+      let originImg = createImg(pic, "origin");
+      originImg.onload = ()=>{
+        document.querySelector(".thumbnail").remove();
+      }
       document.title = decodeURI(pic.split("/").pop());
     }
   </script>
