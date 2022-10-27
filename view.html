@@ -52,12 +52,13 @@
     let picUrl = new URL(pic);
 
     if(picUrl.hostname.endsWith("mscststs.com")){
-      createImg(pic + "?thumbnails&location", "thumbnail");
-      let originImg = createImg(pic, "origin");
-      originImg.onload = ()=>{
-        document.querySelector(".thumbnail").remove();
-      }
       document.title = decodeURI(pic.split("/").pop());
+
+      const thumb = createImg(pic + "?thumbnails&location", "thumbnail");
+      const origin = createImg(pic, "origin");
+      origin.onload = ()=>{
+        thumb.remove();
+      }
     }
   </script>
 </body>
