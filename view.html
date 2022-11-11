@@ -39,12 +39,29 @@
 <body>
   
   <script>
-    function createImg(src, className = ""){
-      const imgEle = document.createElement("img");
+    function createNode(tag="img",src="", className = ""){
+      const imgEle = document.createElement(tag);
       imgEle.src = src;
       imgEle.className = className;
       document.body.append(imgEle);
       return imgEle;
+    }
+
+    const TYPES = {
+      video:[
+        ".mp4",
+        ".avi",
+        ".webm",
+        ".ogg",
+      ],
+      img:[
+        ".png",
+        ".jpg",
+        ".webp",
+        ".bmp",
+        ".gif",
+        ".jpeg"
+      ]
     }
 
     const url = new URL(location.href);
@@ -52,10 +69,18 @@
     let picUrl = new URL(pic);
 
     if(picUrl.hostname.endsWith("mscststs.com")){
-      document.title = decodeURI(pic.split("/").pop());
+      const filename = decodeURI(pic.split("/").pop());
+      document.title = filename;
 
-      const thumb = createImg(pic + "?thumbnails&location", "thumbnail");
-      const origin = createImg(pic, "origin");
+      const tag = Object.keys(TYPES).find(type=>{
+        return TYPES[type].find(sub=>{
+          return filename.toLowerCase().endsWith(sub)
+        })
+      });
+      
+
+      const thumb = createImg("img", pic + "?thumbnails&location", "thumbnail");
+      const origin = createImg(tag, pic, "origin");
       origin.onload = ()=>{
         thumb.remove();
       }
