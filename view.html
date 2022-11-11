@@ -17,7 +17,7 @@
       background-color:#000;
       overflow:hidden;
     }
-    img{
+    .item{
       position:absolute;
       top:0;
       left:0;
@@ -28,10 +28,10 @@
       overflow:hidden;
       object-fit: contain;
     }
-    img.thumbnail{
+    .thumbnail{
       z-index:0;
     }
-    img.origin{
+    .origin{
       z-index:100;
     }
   </style>
@@ -79,8 +79,8 @@
       });
       
 
-      const thumb = createNode("img", pic + "?thumbnails&location", "thumbnail");
-      const origin = createNode(tag, pic, "origin");
+      const thumb = createNode("img", pic + "?thumbnails&location", "thumbnail item");
+      const origin = createNode(tag, pic, "origin item");
       origin.onload = ()=>{
         thumb.remove();
       }
