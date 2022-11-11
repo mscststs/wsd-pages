@@ -79,8 +79,8 @@
       });
       
 
-      const thumb = createImg("img", pic + "?thumbnails&location", "thumbnail");
-      const origin = createImg(tag, pic, "origin");
+      const thumb = createNode("img", pic + "?thumbnails&location", "thumbnail");
+      const origin = createNode(tag, pic, "origin");
       origin.onload = ()=>{
         thumb.remove();
       }
