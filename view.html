@@ -17,7 +17,7 @@
       background-color:#000;
       overflow:hidden;
     }
-    img{
+    .item{
       position:absolute;
       top:0;
       left:0;
@@ -28,10 +28,10 @@
       overflow:hidden;
       object-fit: contain;
     }
-    img.thumbnail{
+    .thumbnail{
       z-index:0;
     }
-    img.origin{
+    .origin{
       z-index:100;
     }
   </style>
@@ -39,11 +39,34 @@
 <body>
   
   <script>
-    function createImg(src, className = ""){
-      const imgEle = document.createElement("img");
-      imgEle.src = src;
-      imgEle.className = className;
-      document.body.append(imgEle);
+
+    function createNode(tag = "script", options = {}, parent = document.body){
+        let ele = document.createElement(tag);
+        Object.entries(options).forEach(([key,val])=>{
+            ele[key] = val;
+        });
+        parent.appendChild(ele);
+        return new Promise((resolve,reject)=>{
+            ele.onload = (...args)=>{resolve(...args); options.onload && options.onload(...args)};
+            ele.onerror = (...args)=>{reject(...args); options.onerror && options.onerror(...args)};;
+        });
+    }
+
+    const TYPES = {
+      video:[
+        ".mp4",
+        ".avi",
+        ".webm",
+        ".ogg",
+      ],
+      img:[
+        ".png",
+        ".jpg",
+        ".webp",
+        ".bmp",
+        ".gif",
+        ".jpeg"
+      ]
     }
 
     const url = new URL(location.href);
@@ -51,9 +74,29 @@
     let picUrl = new URL(pic);
 
     if(picUrl.hostname.endsWith("mscststs.com")){
-      createImg(pic + "?thumbnails&location", "thumbnail");
-      createImg(pic, "origin");
-      document.title = decodeURI(pic.split("/").pop());
+      const filename = decodeURI(pic.split("/").pop());
+      document.title = filename;
+
+      const tag = Object.keys(TYPES).find(type=>{
+        return TYPES[type].find(sub=>{
+          return filename.toLowerCase().endsWith(sub)
+        })
+      });
+
+
+      // createNode("img",{
+      //   src:pic + "?thumbnails&location",
+      //   className:"thumbnail item"
+      // });
+
+      createNode(tag, {
+        src:pic,
+        className:"origin item",
+        controls:"controls",
+        onload:()=>{
+          thumb.remove();
+        }
+      });
     }
   </script>
 </body>
