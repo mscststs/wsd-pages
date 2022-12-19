@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>弹幕 Online</title>
+  <link rel="stylesheet" href="/danmaku/src/index.css">
+</head>
+<body>
+  <div class="form" id="form" style="display:none">
+    <form action="." method="get">
+      <input type="text" placeholder="原始房间号" name="roomid">
+      <input type="submit" value="进入">
+    </form>
+  </div>
+
+  <div id="app" v-cloak>
+    <div class="line" v-for="(item,index) of messages" :key="index">
+      <div class="name">
+        {{item.name}}
+      </div>
+      <div class="content">
+        {{item.message}}
+      </div>
+    </div>
+  </div>
+</body>
+
+<script type="text/javascript" src="/danmaku/src/pako.js"></script> 
+<script type="module" src="/danmaku/src/init.js" ></script>
+</html>
