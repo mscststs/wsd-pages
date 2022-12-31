@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dnspod 转 CloudFlare 格式</title>
+  <link rel="stylesheet" href="/lib/css/common.css">
+  <style>
+    body,html{
+      display:flex;
+      margin:0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="flex flex-auto">
+    <div class="main flex flex-auto">
+      <div class="dragArea flex flex-auto flex-center" @dragover.prevent @drop.prevent="fileDrop">
+        <div class="notify" style="color:#999">
+          将 DNSPOD 导出的 ZONE 文件拖拽进入，或
+        </div>
+        <label for="fileInput" style="color: #11A8FF; cursor: pointer">点此上传</label>
+        <input type="file" id="fileInput" @change="chooseUploadFile" style="display: none;" ref="fileinput">
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./src/index.js" ></script>
+</body>
+</html>
