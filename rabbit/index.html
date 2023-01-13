@@ -13,12 +13,14 @@
       width:100%;
       height:100%;
       background-color: #f6f6f6;
+      --base: 20vh;
     }
     .conatiner{
       width:100%;
       height:100%;
       display:flex;
       flex-direction:column;
+      align-items: center;
     }
     .carrot{
       flex:auto;
@@ -27,38 +29,38 @@
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
+      width:calc(var(--base) );
     }
-    .conatiner:hover .bunny{
-      height:200px;
-
+    .carrot:hover .bunny{
+      height:13vh;
     }
     .carrot .top{
       background:url("./img/carrot.png") 0px 0px;
       background-size: cover;
       background-repeat: no-repeat;
       flex:none;
-      width:300px;
-      height:400px;
+      width:100%;
+      height:30vh;
     }
     .carrot .bunny{
       transition: all 0.5s;
       background:url("./img/bunny.png");
-      background-size: 300px;
+      background-size: cover;
       background-repeat: no-repeat;
       background-position: center center;
       flex:none;
-      width:300px;
+      width:100%;
       height:0px;
       margin-bottom:0px;
       mix-blend-mode: multiply;
     }
     .carrot .bottom{
-      background:url("./img/carrot.png") 0 -400px;
+      background:url("./img/carrot.png") 0 -30vh;
       background-size: cover;
       background-repeat: no-repeat;
       flex:none;
-      width:300px;
-      height:600px;
+      width:100%;
+      height:calc(var(--base) *2);
     }
     div{
     }
