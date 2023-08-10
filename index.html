@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://static.wecity.qq.com/lego_next_static/lib/vue-2.6.11/dist/vue.min.js
-  "></script>
-  <title>～</title><style>
+  <script src="https://static.wecity.qq.com/lego_next_static/lib/vue-2.6.11/dist/vue.min.js"></script>
+  <title>～</title>
+  <style>
     *{
         user-select:none;
     }
@@ -58,32 +58,135 @@
         {{timeText}}
     </div>
 </div>
-<script>
+<script type="module">
 
+function formatTime(date = new Date(), fmt = 'YYYY-MM-DD HH:mm:ss') {
+  date = typeof date === 'string' ? new Date(date) : date;
+  date = typeof date === 'number' ? new Date(date) : date;
+  const o = {
+    'M+': date.getMonth() + 1,
+    'D+': date.getDate(),
+    'h+': date.getHours() % 12 === 0 ? 12 : date.getHours() % 12,
+    'H+': date.getHours(),
+    'm+': date.getMinutes(),
+    's+': date.getSeconds(),
+    'q+': Math.floor((date.getMonth() + 3) / 3),
+    S: date.getMilliseconds()
+  };
+  const week = {
+    0: '\u65e5',
+    1: '\u4e00',
+    2: '\u4e8c',
+    3: '\u4e09',
+    4: '\u56db',
+    5: '\u4e94',
+    6: '\u516d'
+  };
+  if (/(Y+)/.test(fmt)) {
+    fmt = fmt.replace(
+      RegExp.$1,
+      (`${date.getFullYear()}`).substr(4 - RegExp.$1.length)
+    );
+  }
+  if (/(E+)/.test(fmt)) {
+    fmt = fmt.replace(
+      RegExp.$1,
+      (RegExp.$1.length > 1
+        ? RegExp.$1.length > 2 ? '\u661f\u671f' : '\u5468'
+        : '') + week[`${date.getDay()}`]
+    );
+  }
+  for (const k in o) {
+    if (new RegExp(`(${k})`).test(fmt)) {
+      fmt = fmt.replace(
+        RegExp.$1,
+        RegExp.$1.length === 1
+          ? o[k]
+          : (`00${o[k]}`).substr((`${o[k]}`).length)
+      );
+    }
+  }
+  return fmt;
+}
 
 new Vue({
   data() {
     return {
+      holidays:[],
       title: '元旦',
       timeText: "00:00:00",
-      to: new Date("2023/01/01 00:00:00")
+      to: new Date("2024/01/01 00:00:00")
     }
   },
-  mounted() {
+  async mounted() {
     const params = new URL(location.href).searchParams
     const title = params.get("title");
-    const to = params.get("to")
+    const to = params.get("to");
     if (to && title) { 
       this.title = title;
       this.to = new Date(to); 
+    }else{
+      await this.getNextHoliday();
     }
 
     this.resetTimeText();
+
     setInterval(() => {
       this.resetTimeText();
     }, 500);
   },
   methods: {
+    checkIsHoliday(date){
+      // 首先检查是否法定节假日
+      const dateStr = formatTime(date, "YYYY-MM-DD");
+
+      for(let item of this.holidays){
+        if(item.date === dateStr){
+          if(item.isOffDay){
+            return {
+              name:item.name,
+              date: new Date(dateStr+" 00:00:00")
+            }
+          }else{
+            return item.isOffDay;
+          }
+        }
+      }
+
+      // 然后检查是否周末
+      if(date.getDay() === 6 || date.getDay() === 7){
+        return {
+          name:"周末",
+          date: new Date(dateStr+" 00:00:00")
+        }
+      }
+
+
+      return false;
+
+    },
+
+
+    async getNextHoliday(){
+      await this.fetchData();
+      let nextDay = new Date().valueOf();
+      nextDay = new Date(nextDay.valueOf()+86400000);
+
+      while(!this.checkIsHoliday(nextDay)){
+        nextDay = new Date(nextDay.valueOf() + 86400000);
+      }
+
+      const {name,date} = this.checkIsHoliday(nextDay);
+      this.title = name;
+      this.to = date;
+    },
+
+    async fetchData(){
+      let res = await (await fetch(`https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master/${new Date().getFullYear()}.json`)).json();
+      this.holidays = res.days;
+      return res;
+    },
+
     toggleFullScreen() { 
       const isFullScreen = document.fullscreenElement && document.fullscreenElement !== null
       if (!isFullScreen) { 
